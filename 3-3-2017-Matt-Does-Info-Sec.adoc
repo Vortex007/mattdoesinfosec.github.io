@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Matt Does InfoSec</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="https://mattdoesinfosec.github.io/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//mattdoesinfosec.github.io/themes/casper/assets/css/screen.css?v=1488552364651" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="https://mattdoesinfosec.github.io/3-3-2017-Matt-Does-Info-Sec.adoc" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Matt Does InfoSec" />
+    <meta property="og:description" content="The Land of IoT and Honey 3-3-2017 Note: I originally posted this on my wordpress blog during the height of the Mirai stories. I want to use github for everything going forward so I am posting it here The IoT or Internet of Things is the ever growing list of" />
+    <meta property="og:url" content="https://mattdoesinfosec.github.io/3-3-2017-Matt-Does-Info-Sec.adoc" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Matt Does InfoSec" />
+    <meta name="twitter:description" content="The Land of IoT and Honey 3-3-2017 Note: I originally posted this on my wordpress blog during the height of the Mirai stories. I want to use github for everything going forward so I am posting it here The IoT or Internet of Things is the ever growing list of" />
+    <meta name="twitter:url" content="https://mattdoesinfosec.github.io/3-3-2017-Matt-Does-Info-Sec.adoc" />
+    
+    <script type="application/ld+json">
+null
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="" href="https://mattdoesinfosec.github.io/rss/" />
+</head>
+<body class="post-template nav-closed">
+
+    
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        
+    </nav>
+</header>
+
+<main class="content" role="main">
+    <article class="post">
+
+        <header class="post-header">
+            <h1 class="post-title">Matt Does InfoSec</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="Invalid date">Invalid date</time> 
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div class="sect1">
+<h2 id="_the_land_of_iot_and_honey">The Land of IoT and Honey</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>3-3-2017</p>
+</div>
+<div class="paragraph">
+<p><em>Note: I originally posted this on my wordpress blog during the height of the Mirai stories. I want to use github for everything going forward so I am posting it here</em></p>
+</div>
+<div class="paragraph">
+<p>The IoT or Internet of Things is the ever growing list of gadgets and devices that have connectivity to the internet such as cars, cameras, home security systems and many others. Some manufacturers unfortunately do not secure these devices as part of their design and cyber criminals know this and take advantage of it.</p>
+</div>
+<div class="paragraph">
+<p>To create an environment where I could capture and analyze an IoT attack I needed to stand up a system that would be a natural target for this particular type of botnet.</p>
+</div>
+<div class="paragraph">
+<p>First things first was the creation of my honeypot infrastructure. The servers themselves I stood up on the popular cloud computing platform Digital Ocean¹. So far there are three servers active in the environment. The two Ubuntu servers are the honeypots, one running an SSH server and one running a telnet server. The third is a CentOS box I am using as a central log repository and general maintenance server. I plan on diving deeper into the world of honeypots and attack analysis so I will be doing a detailed post on this setup in the future.</p>
+</div>
+<div class="paragraph">
+<p>The honeypot itself is the kippo fork, cowrie². This particular honeypot was an obvious choice because it is robust and can handle the telnet protocol, the popular attack vector for the large IoT botnets. Cowrie comes with a filesystem that an attacker can manipulate- to a point. The filesystem is loaded into memory for every new connection to the honeypot, allowing for a moderate level of interaction.</p>
+</div>
+<div class="paragraph">
+<p>As soon as I started the honeypots and forwarded the ports in iptables I began to see connections roll in quickly followed by bruteforce attempts. Being these are honeypots the bruteforce attempts were obviously successful. At this time the most successful combination for attackers has been [root/xc3511]. These credentials are the default credentials for a DVR and IP camera made by a Chinese company called XiongMai Technologies³.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>[CowrieTelnetTransport,***.***.***.***] login attempt [root/xc3511] succeeded</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So far the bulk of attacking IP addresses are in China, Brazil and India- likely popular markets for the DVR and IP Camera. There were hundreds of other connections that probed the telnet port without actually trying to log in. I was running a tcpdump of all activity and those connections would just sit until timing out. Whether or not these were part of the same botnet remains to be seen.</p>
+</div>
+<div class="paragraph">
+<p>Once the attacker had established a connection to the server and logged in they would probe to make sure they had a shell. The worm attempts to weed out useless systems and low interactive honeypots with the below commands. Fortunately cowrie allows for medium interaction and the attacker proceeded past the initial probe.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>root@ipcamera03:~# enable
+bash: enable: command not found
+root@ipcamera03:~# system
+bash: system: command not found
+root@ipcamera03:~# shell
+bash: shell: command not found
+root@ipcamera03:~# sh
+root@ipcamera03:~# /bin/busybox ECCHI
+ECCHI: applet not found</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The term “ECCHI” is obviously not a recognized busybox command- apparently this is a phrase used in anime. The attacker appends the busybox string to every command after this point.</p>
+</div>
+<div class="paragraph">
+<p>After successfully identifying they had a shell they would begin to probe for writable locations in the filesystem and attempt to change the permissions on a file they created-</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>root@ipcamera03:~# cd /dev &amp;&amp; &gt;.s || cd /var/tmp/ &amp;&amp; &gt;.s || cd /var/run/ &amp;&amp; &gt;.s || cd /var &amp;&amp; &gt;.s || cd /tmp &amp;&amp; &gt;.s || cd /home/ &amp;&amp; &gt;.s; cat .s || cp /bin/echo .s; /bin/busybox ECCHI
+root@ipcamera03:/home# /bin/busybox chmod 777 .s; /bin/busybox ECCHI</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>At this point the attacker would attempt to cat the file they created, however they are unable to get the return they expected, prompting a disconnect.</p>
+</div>
+<div class="paragraph">
+<p>That being said we are able to gather enough data from these initial attacks that we can expand the usage of the honeypot to directly target these IoT botnets. These connections also give us a dataset with which to extrapolate some conclusions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>These attacks are coming from infected IoT hosts using an infect and spread technique.</p>
+</li>
+<li>
+<p>A portion of the infected hosts are DVRs and IP cameras built by a single company.</p>
+</li>
+<li>
+<p>The worm is designed to do low level checks for honeypots to protect itself.</p>
+</li>
+<li>
+<p>The botnet is quite large as the attacks come quickly from many different hosts.</p>
+</li>
+<li>
+<p>The botnet does not exclude a portion of cloud hosts IP space from its scans.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Thank you for reading.</p>
+</div>
+<div class="paragraph">
+<p>-Matt</p>
+</div>
+<div class="paragraph">
+<p>¹ <a href="https://www.digitalocean.com/" class="bare">https://www.digitalocean.com/</a></p>
+</div>
+<div class="paragraph">
+<p>² <a href="https://github.com/micheloosterhof/cowrie" class="bare">https://github.com/micheloosterhof/cowrie</a></p>
+</div>
+<div class="paragraph">
+<p>³ <a href="https://www.flashpoint-intel.com/when-vulnerabilities-travel-downstream/" class="bare">https://www.flashpoint-intel.com/when-vulnerabilities-travel-downstream/</a></p>
+</div>
+</div>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="https://mattdoesinfosec.github.io/author/mattdoesinfosec/" style="background-image: url(https://avatars0.githubusercontent.com/u/20583889?v&#x3D;3)"><span class="hidden">mattdoesinfosec's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="https://mattdoesinfosec.github.io/author/mattdoesinfosec/">mattdoesinfosec</a></h4>
+
+                    <p>Read <a href="https://mattdoesinfosec.github.io/author/mattdoesinfosec/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    
+                    
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/intent/tweet?text=Matt%20Does%20InfoSec&amp;url=https://mattdoesinfosec.github.io/3-3-2017-Matt-Does-Info-Sec.adoc"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https://mattdoesinfosec.github.io/3-3-2017-Matt-Does-Info-Sec.adoc"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=https://mattdoesinfosec.github.io/3-3-2017-Matt-Does-Info-Sec.adoc"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+    </article>
+
+</main>
+
+<aside class="read-next">
+</aside>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="https://mattdoesinfosec.github.io"></a> &copy; 2017</section>
+            <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+        </footer>
+
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+       
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+
+    <script type="text/javascript" src="//mattdoesinfosec.github.io/themes/casper/assets/js/jquery.fitvids.js?v=1488552364651"></script>
+    <script type="text/javascript" src="//mattdoesinfosec.github.io/themes/casper/assets/js/index.js?v=1488552364651"></script>
+
+</body>
+</html>
