@@ -2,9 +2,38 @@
   "meta": {
     "username": "mattdoesinfosec",
     "repositoryName": "mattdoesinfosec.github.io",
-    "branch": "master"
+    "branch": "master",
+    "cname": ""
   },
   "theme": {
-    "name": "Casper"
+    "name": "casper"
+  },
+  "urls": {
+    "site": "https://mattdoesinfosec.github.io",
+    "hubpress": "https://mattdoesinfosec.github.io",
+    "theme": "//mattdoesinfosec.github.io/themes/casper",
+    "images": "https://mattdoesinfosec.github.io/images"
+  },
+  "site": {
+    "title": "Matt Does InfoSec",
+    "description": "My journey through the world of information security.",
+    "logo": "",
+    "cover": "",
+    "delay": "",
+    "postsPerPage": "",
+    "googleAnalytics": "",
+    "disqus": ""
+  },
+  "socialnetwork": {
+    "email": "",
+    "github": "",
+    "twitter": "",
+    "facebook": "",
+    "googleplus": "",
+    "instagram": "",
+    "pinterest": "",
+    "flickr": "",
+    "linkedin": "",
+    "stackoverflow": ""
   }
 }
