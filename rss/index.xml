@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Untitled RSS Feed]]></title><description><![CDATA[Untitled RSS Feed]]></description><link>http://github.com/dylang/node-rss</link><generator>RSS for Node</generator><lastBuildDate>Fri, 03 Mar 2017 14:46:04 GMT</lastBuildDate><atom:link href="undefined/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Matt Does InfoSec]]></title><description><![CDATA[<div class="sect1">
-<h2 id="_the_land_of_iot_and_honey">The Land of IoT and Honey</h2>
-<div class="sectionbody">
-<div class="paragraph">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Matt Does InfoSec]]></title><description><![CDATA["Evils can be created much quicker than they can be cured." -Winston Churchill]]></description><link>https://mattdoesinfosec.github.io</link><generator>RSS for Node</generator><lastBuildDate>Fri, 03 Mar 2017 15:07:39 GMT</lastBuildDate><atom:link href="https://mattdoesinfosec.github.io/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[IoT and Honey]]></title><description><![CDATA[<div class="paragraph">
 <p>3-3-2017</p>
 </div>
 <div class="paragraph">
-<p><em>Note: I originally posted this on my wordpress blog during the height of the Mirai stories. I want to use github for everything going forward so I am posting it here</em></p>
+<p><em>Note: I originally posted this on my wordpress blog during the height of the Mirai stories. I want to use github for everything going forward so I am posting it here.</em></p>
 </div>
 <div class="paragraph">
 <p>The IoT or Internet of Things is the ever growing list of gadgets and devices that have connectivity to the internet such as cars, cameras, home security systems and many others. Some manufacturers unfortunately do not secure these devices as part of their design and cyber criminals know this and take advantage of it.</p>
@@ -97,6 +94,4 @@ root@ipcamera03:/home# /bin/busybox chmod 777 .s; /bin/busybox ECCHI</pre>
 </div>
 <div class="paragraph">
 <p>³ <a href="https://www.flashpoint-intel.com/when-vulnerabilities-travel-downstream/" class="bare">https://www.flashpoint-intel.com/when-vulnerabilities-travel-downstream/</a></p>
-</div>
-</div>
-</div>]]></description><link>undefined3-3-2017-Matt-Does-Info-Sec.adoc</link><guid isPermaLink="true">undefined3-3-2017-Matt-Does-Info-Sec.adoc</guid><pubDate>Invalid Date</pubDate></item></channel></rss>
+</div>]]></description><link>https://mattdoesinfosec.github.io/2017/03/03/IoT-and-Honey.html</link><guid isPermaLink="true">https://mattdoesinfosec.github.io/2017/03/03/IoT-and-Honey.html</guid><pubDate>Fri, 03 Mar 2017 00:00:00 GMT</pubDate></item></channel></rss>
