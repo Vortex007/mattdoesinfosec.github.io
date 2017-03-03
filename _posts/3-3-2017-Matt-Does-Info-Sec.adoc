@@ -1,0 +1,60 @@
+= Matt Does InfoSec
+
+== The Land of IoT and Honey
+
+3-3-2017
+
+_Note: I originally posted this on my wordpress blog during the height of the Mirai stories. I want to use github for everything going forward so I am posting it here_
+
+The IoT or Internet of Things is the ever growing list of gadgets and devices that have connectivity to the internet such as cars, cameras, home security systems and many others. Some manufacturers unfortunately do not secure these devices as part of their design and cyber criminals know this and take advantage of it.
+
+To create an environment where I could capture and analyze an IoT attack I needed to stand up a system that would be a natural target for this particular type of botnet.
+
+First things first was the creation of my honeypot infrastructure. The servers themselves I stood up on the popular cloud computing platform Digital Ocean¹. So far there are three servers active in the environment. The two Ubuntu servers are the honeypots, one running an SSH server and one running a telnet server. The third is a CentOS box I am using as a central log repository and general maintenance server. I plan on diving deeper into the world of honeypots and attack analysis so I will be doing a detailed post on this setup in the future.
+
+The honeypot itself is the kippo fork, cowrie². This particular honeypot was an obvious choice because it is robust and can handle the telnet protocol, the popular attack vector for the large IoT botnets. Cowrie comes with a filesystem that an attacker can manipulate- to a point. The filesystem is loaded into memory for every new connection to the honeypot, allowing for a moderate level of interaction.
+
+As soon as I started the honeypots and forwarded the ports in iptables I began to see connections roll in quickly followed by bruteforce attempts. Being these are honeypots the bruteforce attempts were obviously successful. At this time the most successful combination for attackers has been [root/xc3511]. These credentials are the default credentials for a DVR and IP camera made by a Chinese company called XiongMai Technologies³.
+
+	[CowrieTelnetTransport,***.***.***.***] login attempt [root/xc3511] succeeded
+
+So far the bulk of attacking IP addresses are in China, Brazil and India- likely popular markets for the DVR and IP Camera. There were hundreds of other connections that probed the telnet port without actually trying to log in. I was running a tcpdump of all activity and those connections would just sit until timing out. Whether or not these were part of the same botnet remains to be seen.
+
+Once the attacker had established a connection to the server and logged in they would probe to make sure they had a shell. The worm attempts to weed out useless systems and low interactive honeypots with the below commands. Fortunately cowrie allows for medium interaction and the attacker proceeded past the initial probe.
+
+    root@ipcamera03:~# enable
+    bash: enable: command not found
+    root@ipcamera03:~# system
+    bash: system: command not found
+    root@ipcamera03:~# shell
+    bash: shell: command not found
+    root@ipcamera03:~# sh
+    root@ipcamera03:~# /bin/busybox ECCHI
+    ECCHI: applet not found
+
+The term “ECCHI” is obviously not a recognized busybox command- apparently this is a phrase used in anime. The attacker appends the busybox string to every command after this point.
+
+After successfully identifying they had a shell they would begin to probe for writable locations in the filesystem and attempt to change the permissions on a file they created-
+
+    root@ipcamera03:~# cd /dev && >.s || cd /var/tmp/ && >.s || cd /var/run/ && >.s || cd /var && >.s || cd /tmp && >.s || cd /home/ && >.s; cat .s || cp /bin/echo .s; /bin/busybox ECCHI
+    root@ipcamera03:/home# /bin/busybox chmod 777 .s; /bin/busybox ECCHI
+
+At this point the attacker would attempt to cat the file they created, however they are unable to get the return they expected, prompting a disconnect.
+
+That being said we are able to gather enough data from these initial attacks that we can expand the usage of the honeypot to directly target these IoT botnets. These connections also give us a dataset with which to extrapolate some conclusions:
+
+   * These attacks are coming from infected IoT hosts using an infect and spread technique.
+   * A portion of the infected hosts are DVRs and IP cameras built by a single company.
+   * The worm is designed to do low level checks for honeypots to protect itself.
+   * The botnet is quite large as the attacks come quickly from many different hosts.
+   * The botnet does not exclude a portion of cloud hosts IP space from its scans.
+
+Thank you for reading.
+
+-Matt
+
+¹ https://www.digitalocean.com/
+
+² https://github.com/micheloosterhof/cowrie
+
+³ https://www.flashpoint-intel.com/when-vulnerabilities-travel-downstream/
